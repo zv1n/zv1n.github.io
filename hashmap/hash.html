@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Shitty Trail - Hash Tool</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <style>
+      #map {
+        height: 100%;
+      }
+
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #searchContainer { margin-top: 11px; }
+      #search{ height: 22px; width: 250px; }
+      
+      #help {
+          z-index: 5;
+          position: absolute;
+          bottom: 50px;
+          left: 50px;
+          margin-left: auto; 
+          margin-right: auto; 
+
+          width: 600px;
+          height: 150px;
+
+          direction: ltr; 
+          overflow-x: hidden; 
+          overflow-y: hidden; 
+          text-align: left; 
+
+          -webkit-user-select: none; 
+          padding-top: 1px; 
+          padding-right: 6px; 
+          padding-bottom: 1px; 
+          border-top-width: 1px; 
+          border-right-width: 1px; 
+          border-bottom-width: 1px; 
+          border-left-width: 1px; 
+          border-top-style: solid; 
+          border-right-style: solid; 
+          border-bottom-style: solid; 
+          border-left-style: solid; 
+          border-color: #EEE; 
+          border-image: initial; 
+          -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px; 
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px; 
+          color: rgb(0, 0, 0); 
+          padding-left: 6px; 
+          background-image: initial; 
+          background-attachment: initial; 
+          background-origin: initial; 
+          background-clip: initial; 
+          background-color: rgb(255, 255, 255); 
+          background-position: initial initial; 
+          background-repeat: initial initial;     
+
+          border-radius: 10px;
+          opacity: 0.75;
+      }
+
+      .labels-container{
+        width: 125px; 
+        line-height: 30px;
+        z-index: 1; 
+        margin: 5px;
+        text-align: left;
+        z-index: 100;
+        position: absolute;
+        top: 10px;
+        right: 280px;
+        font-family: Roboto, Arial, sans-serif;
+        font-weight: 500;
+        font-size: 11px;
+      }
+
+      .btns-container{
+        width: 80; 
+        line-height: 30px;
+        z-index: 1; 
+        margin: 5px;
+        cursor: pointer;
+        text-align: left;
+        z-index: 100;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-family: Roboto, Arial, sans-serif;
+        font-weight: 500;
+        font-size: 11px;
+      }
+
+      .container{
+        width: 125px; 
+        line-height: 30px;
+        z-index: 1; 
+        margin: 5px;
+        cursor: pointer;
+        text-align: left;
+        z-index: 100;
+        position: absolute;
+        top: 10px;
+        right: 147px;
+        font-family: Roboto, Arial, sans-serif;
+        font-weight: 500;
+        font-size: 11px;
+      }
+
+      .btnControl{
+          direction: ltr; 
+          overflow-x: hidden; 
+          overflow-y: hidden; 
+          text-align: left; 
+          position: relative; 
+          -webkit-user-select: none; 
+          padding-top: 1px; 
+          padding-right: 6px; 
+          padding-bottom: 1px; 
+          border-top-width: 1px; 
+          border-right-width: 1px; 
+          border-bottom-width: 1px; 
+          border-left-width: 1px; 
+          border-top-style: solid; 
+          border-right-style: solid; 
+          border-bottom-style: solid; 
+          border-left-style: solid; 
+          border-color: #EEE; 
+          border-image: initial; 
+          -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px; 
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px; 
+          color: rgb(0, 0, 0); 
+          padding-left: 6px; 
+          background-image: initial; 
+          background-attachment: initial; 
+          background-origin: initial; 
+          background-clip: initial; 
+          background-color: rgb(255, 255, 255); 
+          background-position: initial initial; 
+          background-repeat: initial initial;     
+          z-index: 2;
+          display: inline-block;
+      }   
+
+      .labelControl{
+          direction: ltr; 
+          overflow-x: hidden; 
+          overflow-y: hidden; 
+          text-align: left; 
+          position: relative; 
+          -webkit-user-select: none; 
+          padding-top: 1px; 
+          padding-right: 6px; 
+          padding-bottom: 1px; 
+          border-top-width: 1px; 
+          border-right-width: 1px; 
+          border-bottom-width: 1px; 
+          border-left-width: 1px; 
+          border-top-style: solid; 
+          border-right-style: solid; 
+          border-bottom-style: solid; 
+          border-left-style: solid; 
+          border-color: #EEE; 
+          border-image: initial; 
+          -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px; 
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px; 
+          color: rgb(0, 0, 0); 
+          padding-left: 6px; 
+          background-image: initial; 
+          background-attachment: initial; 
+          background-origin: initial; 
+          background-clip: initial; 
+          background-color: rgb(255, 255, 255); 
+          background-position: initial initial; 
+          background-repeat: initial initial;     
+          z-index: 2;
+      }   
+
+      .dropDownControl{
+          direction: ltr; 
+          overflow-x: hidden; 
+          overflow-y: hidden; 
+          text-align: left; 
+          position: relative; 
+          -webkit-user-select: none; 
+          padding-top: 1px; 
+          padding-right: 6px; 
+          padding-bottom: 1px; 
+          border-top-width: 1px; 
+          border-right-width: 1px; 
+          border-bottom-width: 1px; 
+          border-left-width: 1px; 
+          border-top-style: solid; 
+          border-right-style: solid; 
+          border-bottom-style: solid; 
+          border-left-style: solid; 
+          border-color: #EEE; 
+          border-image: initial; 
+          -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px; 
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px; 
+          color: rgb(0, 0, 0); 
+          padding-left: 6px; 
+          background-image: initial; 
+          background-attachment: initial; 
+          background-origin: initial; 
+          background-clip: initial; 
+          background-color: rgb(255, 255, 255); 
+          background-position: initial initial; 
+          background-repeat: initial initial;     
+          z-index: 2;
+      }   
+
+      .dropDownArrow{
+          -webkit-user-select: none; 
+          border-width: 0px; 
+          border-style: initial; 
+          border-color: initial; 
+          border-image: initial; 
+          padding: 0px; 
+          margin-right: 0px; 
+          margin-bottom: 0px; 
+          margin-left: 0px; 
+          position: absolute; 
+          right: 6px; 
+          top: 50%;
+          margin-top: -2px; 
+          width: 7px; 
+          height: 4px; 
+      }
+
+      .dropDownOptionsDiv{
+          background-color: white; 
+          z-index: 0; 
+          padding-top: 2px; 
+          border-right-width: 1px; 
+          border-bottom-width: 1px; 
+          border-left-width: 1px; 
+          border-right-style: solid; 
+          border-bottom-style: solid; 
+          border-left-style: solid; 
+          border-color: #EEE; 
+          border-image: initial; 
+          border-top-width: 0px; 
+          border-top-style: initial; 
+          border-top-color: initial; 
+          -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px; 
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px; 
+          position: relative; 
+          text-align: left; 
+          display: none;
+      }
+
+      .dropDownItemDiv{
+          -webkit-user-select: none; 
+          padding-top: 2px; 
+          padding-right: 5px; 
+          padding-bottom: 3px; 
+          padding-left: 5px; 
+          background-color: rgb(255, 255, 255); 
+          color: black;       
+      }
+      .dropDownItemDiv:hover, .checkboxContainer:hover {
+          background-color: rgb(235, 235, 235);       
+      }
+
+      .dropDownControl:hover {
+          background: -webkit-linear-gradient(top,rgb(255,255,255),rgb(230,230,230));
+      }
+
+      .separatorDiv{
+          margin-top: 1px; 
+          margin-right: 0px; 
+          margin-bottom: 1px; 
+          margin-left: 0px; 
+          border-top-width: 1px; 
+          border-top-style: solid; 
+          border-top-color: rgb(235, 235, 235); 
+      }
+      .checkboxContainer{
+          -webkit-user-select: none; 
+          padding-top: 1px; 
+          padding-bottom: 3px; 
+          padding-left: 5px; 
+          direction: ltr; 
+          text-align: left; 
+          background-color: rgb(255, 255, 255); 
+          white-space: nowrap; 
+          padding-right: 8px; 
+          color: rgb(0, 0, 0); 
+      }       
+      .checkboxSpan{
+          box-sizing: border-box; 
+          position: relative; 
+          line-height: 0; 
+          margin-top: 0px; 
+          margin-right: 5px; 
+          margin-bottom: 0px; 
+          margin-left: 0px; 
+          display: inline-block; 
+          background-color: rgb(255, 255, 255); 
+          border-width: 1px; 
+          border-style: solid; 
+          border-color: initial; 
+          border-image: initial; 
+          border-top-left-radius: 1px; 
+          border-top-right-radius: 1px; 
+          border-bottom-right-radius: 1px; 
+          border-bottom-left-radius: 1px; 
+          width: 13px; 
+          height: 13px; 
+          vertical-align: middle; 
+          -webkit-box-shadow: none; 
+          box-shadow: none; 
+          border-color: rgb(198, 198, 198);       
+      }
+
+
+      .blankDiv{
+          position: absolute; 
+          left: 1px; 
+          top: -2px; 
+          width: 13px; 
+          height: 11px; 
+          overflow-x: hidden; 
+          overflow-y: hidden; 
+          display: none; /*when = block -> this is the "check" symbol*/ 
+      }
+
+      .blankImg{
+          position: absolute; 
+          left: -52px; 
+          top: -44px; 
+          -webkit-user-select: none; 
+          border-width: 0px; 
+          border-style: initial; 
+          border-color: initial; 
+          border-image: initial; 
+          padding: 0px; 
+          margin: 0px; 
+          -webkit-user-drag: none; 
+          width: 68px; 
+          height: 67px; 
+      }
+
+      .checkboxLabel{
+          vertical-align: middle; 
+          cursor: pointer;
+      }
+
+      .autoLeg {
+        color: green;
+      }
+
+      .straightLeg {
+        color: red;
+      }
+    </style>
+    <script>
+      var map,
+      directionsService,
+      mode = {},
+      lastLeg,
+      trail = [],
+      undone = [],
+      symbols = [],
+      marker, length = 0,
+      insertMode = false,
+      currentSymbol;
+
+      jQuery.loadScript = function (url, callback) {
+          jQuery.ajax({
+              url: url,
+              dataType: 'script',
+              success: callback,
+              async: true
+          });
+      }
+
+      function computeLength() {
+        length = 0;
+        for ( var t in trail ) {
+          var tr = trail[t];
+          var legLen = google.maps.geometry.spherical.computeLength(tr.getPath().getArray());
+          length += legLen;
+        }
+
+        length *= 0.000621371;
+        length = length.toPrecision(3);
+        return length;
+      }
+
+      function updateDistance(dist) {
+        $('#trailPoints').html(String(dist) + " miles");
+      }
+
+      function setTransit(tp) {
+        mode.id = tp;
+        if (tp == 'auto') {
+          console.log("Setting 'Auto'");
+          $('#ddControl').addClass("autoLeg").removeClass("straightLeg");
+          mode.type = google.maps.TravelMode.DRIVING;
+          mode.color = '#00FF00';
+        } 
+        if (tp == 'straight') {
+          console.log("Setting 'Straight'");
+          $('#ddControl').removeClass("autoLeg").addClass("straightLeg");
+          mode.type = google.maps.TravelMode.WALKING;
+          mode.color = '#FF0000';
+        }
+      }
+
+      function updateLastLeg() {
+        if (trail.length == 0) {
+          marker.setMap(null);
+          return;
+        }
+
+        var last = trail[trail.length - 1],
+        arr = last.getPath().getArray();
+        setLastLeg(arr[arr.length - 1]);
+      }
+
+      function undo() {
+        if (trail.length == 0) return;
+
+        var undo_leg = trail.pop();
+        undone.push(undo_leg);
+        undo_leg.setMap(null);
+        updateLastLeg();
+      }
+
+      function redo() {
+        if (undone.length == 0) return;
+
+        var undo_leg = undone.pop();
+        trail.push(undo_leg);
+        undo_leg.setMap(map);
+        updateLastLeg();
+      }
+
+      function center() {
+        map.panTo(lastLeg);
+      }
+
+      function addPathLeg(path) {
+        console.log(mode.color);
+        var leg = new google.maps.Polyline({
+          path: path,
+          geodesic: true,
+          strokeColor: mode.color,
+          strokeOpacity: 1.0,
+          strokeWeight: 2
+        });
+
+        leg.setMap(map);
+        trail.push(leg);
+
+        updateDistance(computeLength());
+      }
+  
+      function setLastLeg(leg) {
+        marker.setPosition(leg);
+        marker.setMap(map);
+        lastLeg = leg;
+
+        updateDistance(computeLength());
+      }
+
+      function addWaypoint(next, cb) {
+        undone = [];
+        var start = lastLeg;
+        setLastLeg(next);
+        if (!start) return cb();
+
+        if ( mode.id == 'auto') {
+          var request = {
+            origin: start,
+            destination: lastLeg,
+            travelMode: mode.type 
+          };
+
+          directionsService.route(request, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+              var dpath = response.routes[0].overview_path;
+              dpath.push(next);
+              addPathLeg(dpath);
+            } else {
+              alert("Couldn't fetch driving direction from the selected point.  Generating Maximum Shiggy!");
+
+              var oldmode = mode.id;
+              setTransit('straight');
+              addPathLeg([start, lastLeg]);
+              setTransit(oldmode);
+            }
+
+            if (cb) cb();
+          });
+        } else {
+          addPathLeg([start, lastLeg]);
+          if (cb) cb(); 
+        }
+      }
+
+      function showHelp() {
+        $('#help').show();
+      }
+
+      function closeHelp() {
+        $('#help').hide();
+      }
+
+      function updateCursor() {
+        if (insertMode)
+          map.setOptions({ draggableCursor: 'crosshair' });
+        else
+          map.setOptions({ draggableCursor: 'pan' });
+      }
+
+      function updateSymbol(symbol) {
+        currentSymbol = symbol;
+        $('#symbol').html(symbol || "[none]");
+      }
+
+      function addSymbol(pos) {
+        if (!currentSymbol) return;
+        var label = new MapLabel({
+           text: currentSymbol,
+           position: pos, 
+           map: map,
+           fontSize: 20,
+           align: 'right'
+         });
+        symbols.push(label);
+      }
+
+      function initMap() {
+        updateDistance(0);
+
+        $.loadScript('./maplabel.js');
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: { lat: 34.738228, lng: -86.601791 },
+          zoom: 11,
+          mapTypeId: google.maps.MapTypeId.HYBRID,
+          mapTypeControl: true,
+          mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+            mapTypeIds: ['roadmap', 'terrain', 'satellite', 'hybrid']
+          }
+        });
+
+        var contain = $('#searchContainer')[0];
+        var input = $('#search')[0];
+        var searchBox = new google.maps.places.SearchBox(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(contain);
+
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        // Bind the map's bounds (viewport) property to the autocomplete object,
+        // so that the autocomplete requests use the current map bounds for the
+        // bounds option in the request.
+        autocomplete.bindTo('bounds', map);
+
+        autocomplete.addListener('place_changed', function() {
+          var place = autocomplete.getPlace();
+          if (!place.geometry) return;
+          map.panTo(place.geometry.location);
+          map.setZoom(17);  // Why 17? Because it looks good.
+        });
+
+        google.maps.event.addDomListener(document, 'keyup', function (e) {
+          var code = (e.keyCode ? e.keyCode : e.which);
+          if ($(e.target).is('input'))
+            return;
+
+          if (code == 32) {
+            insertMode = !insertMode;
+            updateCursor();
+          }
+          if (code == 65) setTransit('auto');  
+          if (code == 87) setTransit('straight');  
+          if (code == 85) undo();
+          if (code == 82) redo();
+          if (code == 73) updateSymbol(prompt("Chalk Talk Symbol")); 
+          if (code == 27) closeHelp(), updateSymbol(null); 
+          if (code == 191) showHelp();
+        });
+  
+        marker = new google.maps.Marker({
+          position: null,
+          title: 'Current Leg'
+        });
+  
+        google.maps.event.addListener(map, "rightclick", function (event) {
+          addSymbol(event.latLng);
+        });
+
+        google.maps.event.addListener(map, "click", function (event) {
+            if (!insertMode) return;
+            addWaypoint(event.latLng);
+        }); 
+
+        directionsService = new google.maps.DirectionsService();
+        setTransit('straight');
+      }
+
+      </script>
+    </head>
+    <body>
+
+      <div class="container">
+          <div class="dropDownControl" id="ddControl" title="Select Leg Type" onclick="(document.getElementById('myddOptsDiv').style.display == 'block') ? document.getElementById('myddOptsDiv').style.display = 'none' : document.getElementById('myddOptsDiv').style.display = 'block';">
+              Trail Leg Type 
+              <img class="dropDownArrow" src="http://maps.gstatic.com/mapfiles/arrow-down.png"/>
+          </div>
+          <div class = "dropDownOptionsDiv" id="myddOptsDiv">
+              <div class = "dropDownItemDiv autoLeg" id="satelliteOpt" title="Follow Streets/Trails" onClick="setTransit('auto')">Shitty Trail</div>
+              <div class = "dropDownItemDiv straightLeg" id="satelliteOpt" title="Straight Line" onClick="setTransit('straight')">Maximum Shiggy</div>
+      <!--        <div class="separatorDiv"></div>
+              <div class="checkboxContainer" title="This allows for multiple selection/toggling on/off" onclick="(document.getElementById('terrainCheck').style.display == 'block') ? document.getElementById('terrainCheck').style.display = 'none' : document.getElementById('terrainCheck').style.display = 'block';">
+              <span role="checkbox" class="checkboxSpan ">
+                  <div class="blankDiv" id="terrainCheck">
+                      <img class="blankImg" src="http://maps.gstatic.com/mapfiles/mv/imgs8.png" />
+                  </div>
+              </span>             
+              <label class="checkboxLabel">On/Off</label>             
+          </div>  -->         
+          </div> 
+      </div>
+      <div class="labels-container">
+          <div class="labelControl" id="trailPoints">
+            0 miles
+          </div>
+          <div class="labelControl" id="symbol">
+            [none]
+          </div>
+      </div>
+      <div class="search-container" id="searchContainer">
+        <input id="search" type="text"></input>
+      </div>
+      <div class="btns-container">
+          <div class="btnControl" id="trailPoints" onclick="undo()">
+            Undo
+          </div>
+          <div class="btnControl" id="trailPoints" onclick="redo()">
+            Redo
+          </div>
+          <div class="btnControl" id="trailPoints" onclick="center()">
+            Center
+          </div>
+      </div>
+      <div id="map"></div>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyNBPQHj3fK_VQYN_EeNCmd_zkVx_Bi0s&callback=initMap&libraries=places"
+      async defer></script>
+    <div id="help"><pre>
+ [i]           - Set Symbol
+ [a]           - Set Automatic (Shitty Trail) Transit
+ [w]           - Set Straight-line (Max Shiggy) Transit
+ [esc]         - Close Help. Clear Symbol
+ [space]       - Toggle Placement Mode
+ [click]       - Place a waypoint when in 'Placement Mode'
+ [right-click] - Place the current symbol
+    </pre> </div>
+    </body>
+  </html>
